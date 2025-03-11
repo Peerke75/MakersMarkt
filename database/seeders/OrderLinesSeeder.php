@@ -13,12 +13,12 @@ class OrderLinesSeeder extends Seeder
             [
                 'order_id' => 1,
                 'product_id' => 1,
-                'amount' => 1
+                'quantity' => 1
             ],
             [
                 'order_id' => 1,
                 'product_id' => 2,
-                'amount' => 2
+                'quantity' => 2
             ]
         ]);
     }

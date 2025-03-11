@@ -6,14 +6,14 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
-class UsersSeeder extends Seeder
+class UserSeeder extends Seeder
 {
     public function run()
     {
-        DB::table('user')->insert([
+        DB::table('users')->insert([
             [
                 'role_id' => 1, // user
-                'username' => 'user',
+                'name' => 'user',
                 'password' => Hash::make('password'),
                 'email' => 'user@example.com',
                 'bio' => 'I am user.',
@@ -21,7 +21,7 @@ class UsersSeeder extends Seeder
             ],
             [
                 'role_id' => 2, // admin
-                'username' => 'admin',
+                'name' => 'admin',
                 'password' => Hash::make('password'),
                 'email' => 'admin@example.com',
                 'bio' => 'I am admin.',
@@ -29,7 +29,7 @@ class UsersSeeder extends Seeder
             ],
             [
                 'role_id' => 1, // User
-                'username' => 'Mees',
+                'name' => 'Mees',
                 'password' => Hash::make('123456789'),
                 'email' => 'meesvopstal06@hotmail.com',
                 'bio' => 'ik ben een sigma.',
