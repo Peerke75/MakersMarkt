@@ -35,13 +35,13 @@
 
 
             <div class="mb-4">
-                <label for="product_category_id" class="block text-gray-700 font-medium">Categorie</label>
-                <select name="product_category_id" id="product_category_id"
+                <label for="categorie_id" class="block text-gray-700 font-medium">Categorie</label>
+                <select name="categorie_id" id="categorie_id"
                     class="w-full p-2 border border-gray-300 rounded" required>
                     <option value="">Selecteer een categorie</option>
-                    @foreach (\App\Models\ProductCategory::all() as $category)
+                    @foreach (\App\Models\categorie::all() as $category)
                         <option value="{{ $category->id }}"
-                            {{ $product->product_category_id == $category->id ? 'selected' : '' }}>{{ $category->type }}
+                            {{ $product->categorie_id == $category->id ? 'selected' : '' }}>{{ $category->type }}
                         </option>
                     @endforeach
                 </select>

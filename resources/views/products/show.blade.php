@@ -94,7 +94,7 @@
 
                     </div>
 
-                    <img src="https://via.placeholder.com/300" alt="{{ $product->name }}"
+                    <img ssrc="https://picsum.photos/200/300" alt="{{ $product->name }}"
                         class="w-full h-60 object-cover mb-4">
 
                     <h2 class="text-2xl font-semibold mb-2">{{ $product->name }}</h2>

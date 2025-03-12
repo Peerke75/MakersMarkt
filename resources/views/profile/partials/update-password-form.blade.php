@@ -1,3 +1,6 @@
+@extends('layouts.app')
+
+@section('content')
 <section>
     <header>
         <h2 class="text-lg font-medium text-gray-900">
@@ -45,4 +48,9 @@
             @endif
         </div>
     </form>
+<<<<<<< Updated upstream
 </section>
+=======
+</section>
+@endsection
+>>>>>>> Stashed changes

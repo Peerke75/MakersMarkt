@@ -30,4 +30,5 @@ Route::delete('/products/{product}', [ProductController::class, 'destroy'])->nam
 Route::get('/products/{id}/info', [ProductController::class, 'show'])->name('products.info');
 
 Route::get('/products/{product}/buy', [ProductController::class, 'buy'])->name('products.buy');
+
 require __DIR__ . '/auth.php';
