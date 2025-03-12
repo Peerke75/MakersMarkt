@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\Product;
+use App\Models\UserProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -35,23 +37,27 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'description' => 'required|string',
             'price' => 'required|numeric|min:0',
-            'product_category_id' => 'required|exists:product_categories,id',
-            'amount' => 'required',
-            'ean' => 'required|integer',
+            'image' => 'nullable|string',
         ]);
 
-        Product::create([
+        // Nieuw product aanmaken
+        $product = Product::create([
+            'categorie_id' => $request->categorie_id,
             'name' => $request->name,
+            'description' => $request->description,
             'price' => $request->price,
-            'product_category_id' => $request->product_category_id,
-            'amount' => $request->amount,
-            'ean' => $request->ean,
+            'image' => $request->image,
         ]);
 
-        session()->flash('success', 'Product succesvol aangemaakt!');
+        // Product koppelen aan de ingelogde gebruiker
+        UserProduct::create([
+            'user_id' => auth()->id(),
+            'product_id' => $product->id,
+        ]);
 
-        return redirect()->route('products');
+        return redirect()->route('products.index')->with('success', 'Product toegevoegd!');
     }
 
     public function edit($id)
