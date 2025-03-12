@@ -24,37 +24,31 @@ class RegisteredUserController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
-        // Get the login input value (username or email)
-        $login = $request->input('username'); // This should work if you change the form field to 'username'
-
-        // Check if the login input is an email or username
-        $user = User::where('email', $login)
-                    ->orWhere('username', $login)
-                    ->first();
-
-        if (!$user) {
-            // If no user found, return an error
-            return back()->withErrors([
-                'username' => 'The provided credentials are incorrect.',
-            ]);
-        }
-
-        // Check if the password matches
-        if (Hash::check($request->password, $user->password)) {
-            // If the user exists and the password matches, authenticate the user
-            Auth::login($user);
-            $request->session()->regenerate();
-
-            return redirect()->intended(route('dashboard', absolute: false));
-        }
-
-        // If the password doesn't match
-        return back()->withErrors([
-            'username' => 'The provided credentials are incorrect.',
+        // Valideer de invoer
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:users',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
         ]);
+
+        // Maak een nieuwe gebruiker aan
+        $user = User::create([
+            'name' => $request->name,
+            'username' => $request->username,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        // Log de gebruiker in
+        Auth::login($user);
+
+        // Redirect naar de dashboardpagina
+        return redirect()->route('dashboard')->with('success', 'Account succesvol aangemaakt!');
     }
+
 
     /**
      * Destroy an authenticated session.
