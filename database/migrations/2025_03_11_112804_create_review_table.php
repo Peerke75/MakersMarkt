@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table) {
+        Schema::create('review', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->dateTime('completed_at')->nullable();
-            $table->enum('status', ['verzonden', 'geweigerd, terugbetaling verzonden']);
+            $table->foreignId('product_id')->constrained();
+            $table->longText('description');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('orders');
+        Schema::dropIfExists('review');
     }
 };
