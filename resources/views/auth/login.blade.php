@@ -1,7 +1,6 @@
 @extends('layouts.guest')
 
 @section('content')
-<div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
@@ -11,14 +10,16 @@
         <!-- Email or Username -->
         <div>
             <x-input-label for="username" :value="__('Email of Gebruikersnaam')" class="block font-medium text-gray-700" />
-            <x-text-input id="username" class="w-full mt-1 p-2 border rounded-lg" type="text" name="username" :value="old('username')" required autofocus autocomplete="username" />
+            <x-text-input id="username" class="w-full mt-1 p-2 border rounded-lg" type="text" name="username"
+                :value="old('username')" required autofocus autocomplete="username" />
             <x-input-error :messages="$errors->get('username')" class="text-red-500 text-sm mt-1" />
         </div>
 
         <!-- Password -->
         <div>
             <x-input-label for="password" :value="__('Wachtwoord')" class="block font-medium text-gray-700" />
-            <x-text-input id="password" class="w-full mt-1 p-2 border rounded-lg" type="password" name="password" required autocomplete="current-password" />
+            <x-text-input id="password" class="w-full mt-1 p-2 border rounded-lg" type="password" name="password" required
+                autocomplete="current-password" />
             <x-input-error :messages="$errors->get('password')" class="text-red-500 text-sm mt-1" />
         </div>
 
@@ -45,5 +46,4 @@
             </x-primary-button>
         </div>
     </form>
-</div>
 @endsection

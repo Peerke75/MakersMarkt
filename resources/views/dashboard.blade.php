@@ -17,9 +17,9 @@
                 if ($hour < 12) {
                     $greeting=__('Goedemorgen, :name!', ['name'=> $userName]);
                     } elseif ($hour < 18) {
-                        $greeting=__('Goedemiddag, :name!', ['name'=> $userName]);
+                        $greeting=__('Goedenmiddag, :name!', ['name'=> $userName]);
                         } elseif ($hour < 22) {
-                            $greeting=__('Goedeavond, :name!', ['name'=> $userName]);
+                            $greeting=__('Goedenavond, :name!', ['name'=> $userName]);
                             } else {
                             $greeting = __('Goedenacht, :name!', ['name' => $userName]);
                             }
