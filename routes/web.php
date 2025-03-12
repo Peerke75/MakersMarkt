@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CatalogusController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -32,5 +33,7 @@ Route::delete('/products/{product}', [ProductController::class, 'destroy'])->nam
 Route::get('/products/{id}/info', [ProductController::class, 'show'])->name('products.info');
 
 Route::get('/products/{product}/buy', [ProductController::class, 'buy'])->name('products.buy');
+
+Route::get('/catalogus', [CatalogusController::class, 'index'])->name('catalogus');
 
 require __DIR__ . '/auth.php';
