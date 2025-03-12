@@ -55,9 +55,4 @@
             </div>
         </form>
     </x-modal>
-<<<<<<< Updated upstream
 </section>
-=======
-</section>
-@endsection
->>>>>>> Stashed changes

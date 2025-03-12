@@ -48,9 +48,4 @@
             @endif
         </div>
     </form>
-<<<<<<< Updated upstream
 </section>
-=======
-</section>
-@endsection
->>>>>>> Stashed changes

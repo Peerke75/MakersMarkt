@@ -1,5 +1,4 @@
 @extends('layouts.app')
-<<<<<<< Updated upstream
 
 @section('content')
     <x-slot name="header">
@@ -7,8 +6,6 @@
             {{ __('Profile') }}
         </h2>
     </x-slot>
-=======
->>>>>>> Stashed changes
 
 @section('header')
     <h2 class="font-semibold text-xl text-gray-800 leading-tight">
