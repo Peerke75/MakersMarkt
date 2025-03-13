@@ -13,7 +13,7 @@ class Product extends Model
     // Relatie met Categorie
     public function categorie()
     {
-        return $this->belongsTo(Categorie::class);
+        return $this->belongsTo(Categorie::class, 'categorie_id');	
     }
 
     // Relatie met Users via UserProduct

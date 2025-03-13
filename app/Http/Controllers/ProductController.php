@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\UserProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,28 +14,29 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::all();
-        return view('products.products-show', compact('products'));
+        return view('products.index', compact('products'));
     }
 
     public function show($id)
     {
         $product = Product::findOrFail($id);
-        return view('products.products-info', compact('product'));
+        return view('products.show', compact('product'));
     }
     public function buy(Product $product)
     {
-        return view('products.products-buy-in', compact('product'));
+        return view('products.buy-in', compact('product'));
     }
 
     public function create()
     {
-        return view('products.products-create');
+        return view('products.create');
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
+            'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:0',
             'material' => 'required|string',
@@ -46,8 +48,8 @@ class ProductController extends Controller
 
         // Nieuw product aanmaken
         $product = Product::create([
-
             'name' => $request->name,
+            'description' => $request->description,
             'price' => $request->price,
             'quantity' => $request->quantity,
             'material' => $request->material,
@@ -57,15 +59,19 @@ class ProductController extends Controller
             'image' => $request->image,
         ]);
 
-        session()->flash('success', 'Product succesvol aangemaakt!');
+        // Product koppelen aan de ingelogde gebruiker
+        UserProduct::create([
+            'user_id' => auth()->id(),
+            'product_id' => $product->id,
+        ]);
 
-        return redirect()->route('products');
+        return redirect()->route('products.index')->with('success', 'Product toegevoegd!');
     }
 
     public function edit($id)
     {
         $product = Product::findOrFail($id);
-        return view('products.products-edit', compact('product'));
+        return view('products.edit', compact('product'));
     }
 
     public function update(Request $request, $id)
