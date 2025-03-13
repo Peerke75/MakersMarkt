@@ -99,9 +99,13 @@
 
                     <h2 class="text-2xl font-semibold mb-2">{{ $product->name }}</h2>
                     <p class="text-lg font-bold text-gray-800 mb-2">Prijs: €{{ number_format($product->price, 2) }}</p>
-                    <p class="text-gray-600">Aantal in voorraad: {{ $product->amount }}</p>
-                    <p class="text-gray-600">EAN nummer: {{ $product->ean }}</p>
-                    <p class="text-gray-600">Productcategorie: {{ $product->product_category_id }}</p>
+                    <p class="text-gray-600">Aantal in voorraad: {{ $product->quantity }}</p>
+                    <p class="text-gray-600">Gemaakt van: {{ $product->material }}</p>
+                    <p class="text-gray-600">Productcategorie: {{ $product->categorie->name }}</p>
+                    <p class="text-gray-600">Productietijd: {{ $product->production_time }}</p>
+                    @if ($product->link)
+                        <p class="text-gray-600">Meer informatie: <a href="{{ $product->link }}" class="text-blue-500 hover:underline">{{ $product->link }}</a></p>
+                    @endif
                     <a href="{{ route('products.buy', $product->id) }}"
                         class="block text-center py-2 px-4 mt-4 rounded transition"
                         style="background-color:#fdd716; color:#000000;">

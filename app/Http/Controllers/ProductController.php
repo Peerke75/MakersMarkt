@@ -36,17 +36,25 @@ class ProductController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
-            'product_category_id' => 'required|exists:product_categories,id',
-            'amount' => 'required',
-            'ean' => 'required|integer',
+            'quantity' => 'required|integer|min:0',
+            'material' => 'required|string',
+            'description' => 'required|string',
+            'production_time' => 'required|string',
+            'categorie_id' => 'required|exists:categories,id',
+            'image' => 'nullable|string',
         ]);
 
-        Product::create([
+        // Nieuw product aanmaken
+        $product = Product::create([
+
             'name' => $request->name,
             'price' => $request->price,
-            'product_category_id' => $request->product_category_id,
-            'amount' => $request->amount,
-            'ean' => $request->ean,
+            'quantity' => $request->quantity,
+            'material' => $request->material,
+            'description' => $request->description,
+            'production_time' => $request->production_time,
+            'categorie_id' => $request->categorie_id,
+            'image' => $request->image,
         ]);
 
         session()->flash('success', 'Product succesvol aangemaakt!');
@@ -64,19 +72,25 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'price' => 'required|numeric',
-            'product_category_id' => 'required|exists:product_categories,id',
-            'amount' => 'required',
-            'ean' => 'required',
+            'price' => 'required|numeric|min:0',
+            'quantity' => 'required|integer|min:0',
+            'material' => 'required|string',
+            'description' => 'required|string',
+            'production_time' => 'required|string',
+            'categorie_id' => 'required|exists:categories,id',
+            'image' => 'nullable|string',
         ]);
 
         $product = Product::findOrFail($id);
         $product->update([
             'name' => $request->name,
             'price' => $request->price,
-            'product_category_id' => $request->product_category_id,
-            'amount' => $request->amount,
-            'ean' => $request->ean,
+            'quantity' => $request->quantity,
+            'material' => $request->material,
+            'description' => $request->description,
+            'production_time' => $request->production_time,
+            'categorie_id' => $request->categorie_id,
+            'image' => $request->image,
         ]);
 
         session()->flash('success', 'Product succesvol bijgewerkt!');
