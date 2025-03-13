@@ -24,6 +24,10 @@
                 </div>
 
 
+                    <x-nav-link :active="request()->routeIs('#')">
+                        {{ __('Mijn Portfolio') }}
+                    </x-nav-link>
+                </div>
             </div>
 
             <!-- Settings Dropdown -->
