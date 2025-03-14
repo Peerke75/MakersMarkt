@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class OrderLine extends Model
 {
-    protected $fillable = ['order_id', 'product_id', 'amount'];
+    protected $fillable = ['order_id', 'product_id', 'quantity'];
 
     // Relatie met Order
     public function order()

@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
+use App\Models\OrderLine;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -27,15 +30,38 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Validatie
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'quantity' => 'required|integer|min:1',
+            'payment_method' => 'required|in:ideal,paypal,creditcard,v-pay',
+        ]);
+
+        // Order aanmaken
+        $order = Order::create([
+            'user_id' => Auth::id(),
+            'status' => 'verzonden', // Eventueel later aanpassen
+            'completed_at' => now(),
+        ]);
+
+        // OrderLine toevoegen
+        OrderLine::create([
+            'order_id' => $order->id,
+            'product_id' => $request->product_id,
+            'quantity' => $request->quantity,
+        ]);
+
+        // Redirect met succesbericht
+        return redirect()->route('orders.show', $order->id)->with('success', 'Bestelling geplaatst!');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        $order = Order::with('orderLines.product')->findOrFail($id);
+        return view('orders.show', compact('order'));
     }
 
     /**
