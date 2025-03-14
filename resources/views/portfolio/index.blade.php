@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
+@if (session('success'))
+    <div class="bg-green-500 text-white p-4 rounded-lg">
+        {{ session('success') }}
+    </div>
+@endif
+
 <div class="container mx-auto px-4 py-6">
     <h1 class="text-3xl font-bold text-center mb-6">Mijn Portfolio</h1>
 

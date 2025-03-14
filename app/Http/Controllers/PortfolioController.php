@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Categorie;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
@@ -17,23 +18,19 @@ class PortfolioController extends Controller
         return view('portfolio.index', compact('products'));
     }
 
-    /**
-     * Toon de pagina om een nieuw product toe te voegen.
-     */
     public function create()
     {
-        return view('portfolio.create');
+        $categories = Categorie::all();
+
+        return view('portfolio.create', compact('categories'));
     }
 
-    /**
-     * Sla een nieuw product op in de database.
-     */
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required',
-            'category_id' => 'required|exists:categories,id',
+            'categorie_id' => 'required|exists:categories,id',
             'production_time' => 'required|in:1-3 maanden,4-6 maanden,7-9 maanden,10-12 maanden',
             'material' => 'required|in:hout,metaal,kunststof,glas,steen,textiel,leer,papier,keramiek,overig',
             'price' => 'required|numeric|min:0',
@@ -42,14 +39,14 @@ class PortfolioController extends Controller
         ]);
 
         $product = new Product();
-        $product->maker_id = Auth::id();
         $product->name = $request->name;
         $product->description = $request->description;
-        $product->categorie_id = $request->category_id;
+        $product->categorie_id = $request->categorie_id;
         $product->production_time = $request->production_time;
         $product->material = $request->material;
         $product->price = $request->price;
         $product->quantity = $request->quantity;
+        $product->maker_id = Auth::id();
 
         if ($request->hasFile('image')) {
             $product->image = $request->file('image')->store('products', 'public');
@@ -57,8 +54,10 @@ class PortfolioController extends Controller
 
         $product->save();
 
-        return redirect()->route('portfolio.index')->with('success', 'Product toegevoegd aan je portfolio!');
+        return redirect()->route('portfolio.index')->with('success', 'Product succesvol toegevoegd!');
     }
+
+
 
     /**
      * Toon het bewerkformulier voor een product.
@@ -79,7 +78,7 @@ class PortfolioController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required',
-            'category_id' => 'required|exists:categories,id',
+            'categorie_id' => 'required|exists:categories,id',
             'production_time' => 'required|in:1-3 maanden,4-6 maanden,7-9 maanden,10-12 maanden',
             'material' => 'required|in:hout,metaal,kunststof,glas,steen,textiel,leer,papier,keramiek,overig',
             'price' => 'required|numeric|min:0',
@@ -89,7 +88,7 @@ class PortfolioController extends Controller
 
         $product->name = $request->name;
         $product->description = $request->description;
-        $product->categorie_id = $request->category_id;
+        $product->categorie_id = $request->categorie_id;
         $product->production_time = $request->production_time;
         $product->material = $request->material;
         $product->price = $request->price;
