@@ -2,7 +2,7 @@
 
 @section('content')
 @if (session('success'))
-    <div class="bg-green-500 text-white p-4 rounded-lg">
+    <div class="bg-green-400 text-white p-4 rounded-lg">
         {{ session('success') }}
     </div>
 @endif
@@ -26,8 +26,8 @@
                 <p class="text-gray-800 font-bold mt-2">€{{ number_format($product->price, 2) }}</p>
 
                 <div class="flex justify-between items-center mt-4">
-                    <a href="{{ route('products.edit', $product->id) }}" class="text-blue-500 hover:text-blue-600">Bewerken</a>
-                    <form action="{{ route('products.destroy', $product->id) }}" method="POST" onsubmit="return confirm('Weet je zeker dat je dit product wilt verwijderen?');">
+                    <a href="{{ route('portfolio.edit', $product->id) }}" class="text-blue-500 hover:text-blue-600">Bewerken</a>
+                    <form action="{{ route('portfolio.destroy', $product->id) }}" method="POST" onsubmit="return confirm('Weet je zeker dat je dit product wilt verwijderen?');">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="text-red-500 hover:text-red-600">Verwijderen</button>

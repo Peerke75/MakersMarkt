@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Categorie;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 
 class PortfolioController extends Controller
@@ -57,24 +58,16 @@ class PortfolioController extends Controller
         return redirect()->route('portfolio.index')->with('success', 'Product succesvol toegevoegd!');
     }
 
-
-
-    /**
-     * Toon het bewerkformulier voor een product.
-     */
-    public function edit(Product $product)
+    public function edit($id)
     {
-        $this->authorize('update', $product);
-        return view('portfolio.edit', compact('product'));
+        $product = Product::findOrFail($id);
+        $categories = Categorie::all();
+
+        return view('portfolio.edit', compact('product', 'categories'));
     }
 
-    /**
-     * Werk een product bij in de database.
-     */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, $id)
     {
-        $this->authorize('update', $product);
-
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required',
@@ -86,6 +79,12 @@ class PortfolioController extends Controller
             'image' => 'nullable|image|max:2048',
         ]);
 
+        $product = Product::findOrFail($id);
+
+        if ($product->maker_id !== Auth::id()) {
+            return redirect()->route('portfolio.index')->with('error', 'Je hebt geen rechten om dit product te bewerken.');
+        }
+
         $product->name = $request->name;
         $product->description = $request->description;
         $product->categorie_id = $request->categorie_id;
@@ -95,6 +94,9 @@ class PortfolioController extends Controller
         $product->quantity = $request->quantity;
 
         if ($request->hasFile('image')) {
+            if ($product->image) {
+                Storage::disk('public')->delete($product->image);
+            }
             $product->image = $request->file('image')->store('products', 'public');
         }
 
@@ -103,13 +105,18 @@ class PortfolioController extends Controller
         return redirect()->route('portfolio.index')->with('success', 'Product succesvol bijgewerkt!');
     }
 
-    /**
-     * Verwijder een product.
-     */
     public function destroy(Product $product)
     {
-        $this->authorize('delete', $product);
+        // Verwijder de afbeelding uit de storage als die bestaat
+        if ($product->image) {
+            Storage::disk('public')->delete($product->image);
+        }
+
+        // Verwijder het product
         $product->delete();
-        return redirect()->route('portfolio.index')->with('success', 'Product verwijderd uit je portfolio.');
+
+        // Redirect met een succesmelding
+        return redirect()->route('portfolio.index')->with('success', 'Product succesvol verwijderd!');
     }
+
 }
