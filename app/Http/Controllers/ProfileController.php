@@ -26,16 +26,21 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        // Vul de velden in met de gevalideerde data
+        $user->fill($request->validated());
+
+        // Als de e-mail gewijzigd is, reset de verificatie
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        // Update the bio field
-        $request->user()->bio = $request->input('bio');
+        // Update de bio
+        $user->bio = $request->input('bio');
 
-        $request->user()->save();
+        // Opslaan in database
+        $user->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }

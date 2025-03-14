@@ -13,7 +13,7 @@ class UserSeeder extends Seeder
     {
         DB::table('users')->insert([
             [
-                'role_id' => 1, // user
+                'role_id' => 1,
                 'username' => 'user123',
                 'name' => 'User',
                 'email' => 'user@example.com',
@@ -27,7 +27,7 @@ class UserSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'role_id' => 2, // admin
+                'role_id' => 2,
                 'username' => 'admin123',
                 'name' => 'Admin',
                 'email' => 'admin@example.com',
@@ -41,7 +41,7 @@ class UserSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'role_id' => 1, // user
+                'role_id' => 1,
                 'username' => 'mees06',
                 'name' => 'Mees',
                 'email' => 'meesvopstal06@hotmail.com',
@@ -55,7 +55,7 @@ class UserSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'role_id' => 2, // admin
+                'role_id' => 2,
                 'username' => 'Dylano12345',
                 'name' => 'Dylano',
                 'email' => 'dqdebie@gmail.com',
