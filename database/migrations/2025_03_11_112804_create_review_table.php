@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->foreignId('product_id')->constrained();
             $table->longText('description');
+            $table->float('rating');
+            $table->datetime('review_added');
             $table->timestamps();
         });
     }
