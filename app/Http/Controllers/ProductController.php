@@ -11,10 +11,35 @@ use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::all();
-        return view('products.index', compact('products'));
+        $user = auth()->user();
+
+        // Haal de zoek- en filterwaarden op
+        $categorie = $request->input('categorie_id');
+        $material = $request->input('material');
+        $production_time = $request->input('production_time');
+
+        // Query opbouwen met filters
+        $query = Product::query();
+
+
+        if ($categorie) {
+            $query->where('categorie_id', $categorie);
+        }
+
+        if ($material) {
+            $query->where('material', $material);
+        }
+
+        if ($production_time) {
+            $query->where('production_time', $production_time);
+        }
+
+        // Pagineren (6 items per pagina)
+        $products = $query->paginate(6);
+
+        return view('products.index', compact('products', 'categorie', 'material', 'production_time'));
     }
 
     public function show($id)

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -28,9 +29,15 @@ Route::post('/products', [ProductController::class, 'store'])->name('products.st
 Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
 Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
 Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
-
 Route::get('/products/{id}/info', [ProductController::class, 'show'])->name('products.info');
-
 Route::get('/products/{product}/buy', [ProductController::class, 'buy'])->name('products.buy');
+Route::get('/products/filter', [ProductController::class, 'filter'])->name('products.filter');
+
+
+Route::get('/reviews/search', [ReviewController::class, 'search'])->name('reviews.search');
+Route::get('/reviews/{product}', [ReviewController::class, 'index'])->name('reviews');
+Route::get('/reviews/create/{product}', [ReviewController::class, 'create'])->name('reviews.create');
+Route::post('/reviews/{product}', [ReviewController::class, 'store'])->name('reviews.store');
+
 
 require __DIR__ . '/auth.php';
