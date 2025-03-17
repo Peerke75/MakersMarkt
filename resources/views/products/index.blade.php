@@ -33,9 +33,8 @@
     <body class="bg-gray-100">
 
         <div class="container mx-auto px-4 py-8">
-
             <div class="relative mb-6 max-w-md mx-auto">
-                <input type="text" id="product-search" placeholder="Zoek product..."
+                <input type="text" id="product-search" placeholder="Zoek product in de catalogus..."
                     class="w-full p-3 border border-gray-300 rounded shadow focus:outline-none focus:ring-2 focus:ring-yellow-400"
                     style="background-color: #ffffff; color: #000;">
 
@@ -44,14 +43,41 @@
                 </ul>
             </div>
 
-            <div class="mb-8 flex justify-between">
-                <a href="{{ route('products.create') }}" style="background-color:#fdd716 ;color:#000000;"
-                    class="text-white py-2 px-4 rounded transition hover:bg-yellow-400">
-                    Product Create
-                </a>
+            <div class="flex justify-center">
+                <form method="GET" action="{{ route('products') }}" class="mb-6 flex flex-wrap gap-4">
+                    {{-- Categorie filter --}}
+                    <select name="categorie_id" id="categorie-filter" class="px-5  border border-gray-300 rounded">
+                        <option value="">Categorie</option>
+                        @foreach ($products as $product)
+                            <option value="{{ $product->categorie->id }}">{{ $product->categorie->name }}</option>
+                        @endforeach
+                    </select>
+
+                    {{-- Productietijd filter --}}
+                    <select name="production_time" id="production-time-filter" class="px-4 border border-gray-300 rounded">
+                        <option value="">Productietijd</option>
+                        @foreach (['1-3 maanden', '4-6 maanden', '7-9 maanden', '10-12 maanden'] as $time)
+                            <option value="{{ $time }}">{{ $time }}</option>
+                        @endforeach
+                    </select>
+
+                    {{-- Materiaal filter --}}
+                    <select name="material" id="material-filter" class="px-6 border border-gray-300 rounded">
+                        <option value="">Materiaal</option>
+                        @foreach (['hout', 'metaal', 'kunststof', 'glas', 'steen', 'textiel', 'leer', 'papier', 'keramiek', 'overig'] as $material)
+                            <option value="{{ $material }}">{{ ucfirst($material) }}</option>
+                        @endforeach
+                    </select>
+
+                    <button type="submit" class="px-4 py-2 bg-yellow-500 text-white rounded">
+                        Filter & Zoek
+                    </button>
+                </form>
             </div>
 
-            <h1 class="text-3xl font-bold text-center mb-8">Product Overzicht</h1>
+
+
+            <h1 class="text-3xl font-bold text-center mb-8">Catalogus</h1>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 @foreach ($products as $product)
                     <div class="bg-white shadow-lg rounded-lg overflow-hidden">
@@ -63,8 +89,7 @@
                                 <p class="text-lg font-bold text-gray-800">€{{ number_format($product->price, 2) }}</p>
                             </div>
                             <a href="{{ route('products.info', $product->id) }}"
-                                style="background-color:#000000 ;color:#fdd716;"
-                                class="block text-center py-2 px-4 rounded transition">Bekijk product</a>
+                                class="block bg-gray-300 text-center py-2 px-4 rounded transition">Bekijk product</a>
                         </div>
                     </div>
                 @endforeach
@@ -118,5 +143,6 @@
                     });
                 });
             </script>
+        </div>
     </body>
 @endsection

@@ -11,10 +11,35 @@ use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::all();
-        return view('products.index', compact('products'));
+        $user = auth()->user();
+
+        // Haal de zoek- en filterwaarden op
+        $categorie = $request->input('categorie_id');
+        $material = $request->input('material');
+        $production_time = $request->input('production_time');
+
+        // Query opbouwen met filters
+        $query = Product::query();
+
+
+        if ($categorie) {
+            $query->where('categorie_id', $categorie);
+        }
+
+        if ($material) {
+            $query->where('material', $material);
+        }
+
+        if ($production_time) {
+            $query->where('production_time', $production_time);
+        }
+
+        // Pagineren (6 items per pagina)
+        $products = $query->paginate(6);
+
+        return view('products.index', compact('products', 'categorie', 'material', 'production_time'));
     }
 
     public function show($id)
@@ -40,15 +65,24 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
+            'quantity' => 'required|integer|min:0',
+            'material' => 'required|string',
+            'description' => 'required|string',
+            'production_time' => 'required|string',
+            'categorie_id' => 'required|exists:categories,id',
             'image' => 'nullable|string',
         ]);
 
         // Nieuw product aanmaken
         $product = Product::create([
-            'categorie_id' => $request->categorie_id,
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
+            'quantity' => $request->quantity,
+            'material' => $request->material,
+            'description' => $request->description,
+            'production_time' => $request->production_time,
+            'categorie_id' => $request->categorie_id,
             'image' => $request->image,
         ]);
 
@@ -71,19 +105,25 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'price' => 'required|numeric',
-            'product_category_id' => 'required|exists:product_categories,id',
-            'amount' => 'required',
-            'ean' => 'required',
+            'price' => 'required|numeric|min:0',
+            'quantity' => 'required|integer|min:0',
+            'material' => 'required|string',
+            'description' => 'required|string',
+            'production_time' => 'required|string',
+            'categorie_id' => 'required|exists:categories,id',
+            'image' => 'nullable|string',
         ]);
 
         $product = Product::findOrFail($id);
         $product->update([
             'name' => $request->name,
             'price' => $request->price,
-            'product_category_id' => $request->product_category_id,
-            'amount' => $request->amount,
-            'ean' => $request->ean,
+            'quantity' => $request->quantity,
+            'material' => $request->material,
+            'description' => $request->description,
+            'production_time' => $request->production_time,
+            'categorie_id' => $request->categorie_id,
+            'image' => $request->image,
         ]);
 
         session()->flash('success', 'Product succesvol bijgewerkt!');

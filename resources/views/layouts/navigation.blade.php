@@ -19,19 +19,18 @@
 
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('products')" :active="request()->routeIs('products')">
-                        {{ __('Products') }}
+                        {{ __('Catalogus') }}
+                    </x-nav-link>
+                </div>
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    <x-nav-link :href="route('portfolio.index')" :active="request()->routeIs('portfolio.index')">
+                        {{ __('Mijn portfolio') }}
                     </x-nav-link>
                 </div>
 
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('orders.index')" :active="request()->routeIs('orders.index')">
                         {{ __('Orders') }}
-                    </x-nav-link>
-                </div>
-
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :active="request()->routeIs('#')">
-                        {{ __('Mijn Portfolio') }}
                     </x-nav-link>
                 </div>
 
