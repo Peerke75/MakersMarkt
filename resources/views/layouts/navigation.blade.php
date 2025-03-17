@@ -24,7 +24,7 @@
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                     <x-nav-link :href="route('portfolio.index')" :active="request()->routeIs('portfolio.index')">
-                        {{ __('MIjn portfolio') }}
+                        {{ __('Mijn portfolio') }}
                     </x-nav-link>
                 </div>
 
@@ -34,11 +34,6 @@
                     </x-nav-link>
                 </div>
 
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :active="request()->routeIs('#')">
-                        {{ __('Mijn Portfolio') }}
-                    </x-nav-link>
-                </div>
             </div>
 
             <!-- Settings Dropdown -->
