@@ -46,6 +46,8 @@ Route::delete('/products/{product}', [ProductController::class, 'destroy'])->nam
 Route::get('/products/{id}/info', [ProductController::class, 'show'])->name('products.info');
 Route::get('/products/{product}/buy', [ProductController::class, 'buy'])->name('products.buy');
 Route::get('/products/filter', [ProductController::class, 'filter'])->name('products.filter');
+Route::post('/products/{product}/categories', [ProductController::class, 'addCategories'])->name('products.addCategories');
+
 
 
 Route::get('/reviews/search', [ReviewController::class, 'search'])->name('reviews.search');

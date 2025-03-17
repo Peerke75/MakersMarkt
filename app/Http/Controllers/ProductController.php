@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Categorie;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\UserProduct;
@@ -13,39 +14,31 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $user = auth()->user();
-
-        // Haal de zoek- en filterwaarden op
-        $categorie = $request->input('categorie_id');
-        $material = $request->input('material');
-        $production_time = $request->input('production_time');
-
-        // Query opbouwen met filters
         $query = Product::query();
 
-
-        if ($categorie) {
-            $query->where('categorie_id', $categorie);
+        // Filters toepassen
+        if ($request->has('categorie_id') && $request->categorie_id != '') {
+            $query->where('categorie_id', $request->categorie_id);
+        }
+        if ($request->has('production_time') && $request->production_time != '') {
+            $query->where('production_time', $request->production_time);
+        }
+        if ($request->has('material') && $request->material != '') {
+            $query->where('material', $request->material);
         }
 
-        if ($material) {
-            $query->where('material', $material);
-        }
+        $products = $query->get();
+        $categories = Categorie::all(); // ✅ Haal categorieën apart op
 
-        if ($production_time) {
-            $query->where('production_time', $production_time);
-        }
-
-        // Pagineren (6 items per pagina)
-        $products = $query->paginate(6);
-
-        return view('products.index', compact('products', 'categorie', 'material', 'production_time'));
+        return view('products.index', compact('products', 'categories'));
     }
+
 
     public function show($id)
     {
+        $categories = Categorie::all();
         $product = Product::findOrFail($id);
-        return view('products.show', compact('product'));
+        return view('products.show', compact('product', 'categories'));
     }
     public function buy(Product $product)
     {
@@ -141,12 +134,32 @@ class ProductController extends Controller
 
     public function search(Request $request)
     {
-        $query = $request->get('query');
+        $query = $request->query('query');
 
-        $products = \App\Models\Product::where('name', 'LIKE', "%{$query}%")
-            ->limit(5)
+        $products = Product::where('name', 'LIKE', "%{$query}%")
+            ->orWhere('description', 'LIKE', "%{$query}%")
             ->get();
 
         return response()->json($products);
     }
+
+    public function addCategories(Request $request, Product $product)
+    {
+        // Valideer invoer
+        $request->validate([
+            'categorie_id' => 'required|exists:categories,id',
+            'material' => 'nullable|string|max:255',
+            'production_time' => 'nullable|string|max:255',
+        ]);
+
+        // Werk het product bij
+        $product->update([
+            'categorie_id' => $request->categorie_id, // Enkele categorie
+            'material' => $request->material,
+            'production_time' => $request->production_time,
+        ]);
+
+        return redirect()->back()->with('success', 'Categorie en filters bijgewerkt!');
+    }
+
 }

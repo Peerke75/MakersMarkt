@@ -62,7 +62,7 @@
                         <div id="dropdownMenu"
                             class="hidden absolute right-0 mt-2 bg-white border border-gray-200 rounded-md shadow-lg p-2 space-y-2">
 
-                            <!-- Bewerken knop -->
+                            <!-- Reviews -->
                             <a href="{{ route('reviews', $product->id) }}"
                                 class="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -73,16 +73,22 @@
                                 <span class="ml-2">Reviews</span>
                             </a>
 
-
+                            <!-- Categorieën knop -->
+                            <button onclick="openCategoryModal()"
+                                class="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M9.568 3H5.25A2.25 2.25 0 0 0 3 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 0 0 5.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 0 0 9.568 3Z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6Z" />
+                                </svg>
+                                <span class="ml-2">Categorieën</span>
+                            </button>
                         </div>
 
-
-
                     </div>
-
                     <img ssrc="https://picsum.photos/200/300" alt="{{ $product->name }}"
                         class="w-full h-60 object-cover mb-4">
-
                     <h2 class="text-2xl font-semibold mb-2">{{ $product->name }}</h2>
                     <p class="text-lg font-bold text-gray-800 mb-2">Prijs: €{{ number_format($product->price, 2) }}</p>
                     <p class="text-gray-600">Aantal in voorraad: {{ $product->quantity }}</p>
@@ -118,6 +124,58 @@
                 </div>
             </div>
         </div>
+        <!-- Categorie Modal -->
+        <div id="categoryModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+            <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+                <h2 class="text-lg font-semibold mb-4">Categorieën en Filters</h2>
+
+                <!-- Categorieën selectie -->
+                <form method="POST" action="{{ route('products.addCategories', $product->id) }}">
+                    @csrf
+                    <label class="block mb-2">Selecteer categorie:</label>
+                    <select name="categorie_id" class="w-full border border-gray-300 rounded p-2">
+                        @foreach ($categories as $category)
+                            <option value="{{ $category->id }}"
+                                {{ $product->categorie_id == $category->id ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <label class="block mb-2">Materiaal:</label>
+                    <select name="material" id="material-filter" class="w-full border border-gray-300 rounded p-2">
+                        <option value="">Materiaal</option>
+                        @foreach (['hout', 'metaal', 'kunststof', 'glas', 'steen', 'textiel', 'leer', 'papier', 'keramiek', 'overig'] as $material)
+                            <option value="{{ $material }}">{{ ucfirst($material) }}</option>
+                        @endforeach
+                    </select>
+
+                    <label class="block mb-2">Productietijd:</label>
+                    <select name="production_time" id="production-time-filter" class="w-full border border-gray-300 rounded p-2">
+                        <option value="">Productietijd</option>
+                        @foreach (['1-3 maanden', '4-6 maanden', '7-9 maanden', '10-12 maanden'] as $time)
+                            <option value="{{ $time }}">{{ $time }}</option>
+                        @endforeach
+                    </select>
+
+                    <div class="mt-4 flex justify-end">
+                        <button type="button" onclick="closeCategoryModal()"
+                            class="px-4 py-2 bg-gray-300 rounded mr-2">Annuleren</button>
+                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">Opslaan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            function openCategoryModal() {
+                document.getElementById('categoryModal').classList.remove('hidden');
+            }
+
+            function closeCategoryModal() {
+                document.getElementById('categoryModal').classList.add('hidden');
+            }
+        </script>
+
         <script>
             function toggleDropdown() {
                 const dropdown = document.getElementById('dropdownMenu');
