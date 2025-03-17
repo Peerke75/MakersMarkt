@@ -24,7 +24,9 @@ class ProductController extends Controller
     }
     public function buy(Product $product)
     {
-        return view('products.buy-in', compact('product'));
+        $cart = session()->get('cart', []);
+
+        return view('products.buy-in', compact('product', 'cart'));
     }
 
     public function create()

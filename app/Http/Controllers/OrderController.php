@@ -30,29 +30,32 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        // Validatie
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'quantity' => 'required|integer|min:1',
-            'payment_method' => 'required|in:ideal,paypal,creditcard,v-pay',
-        ]);
+        // Controleer of de winkelwagen leeg is
+        $cart = session()->get('cart', []);
+        if (empty($cart)) {
+            return redirect()->route('cart.show')->with('error', 'Je winkelwagen is leeg!');
+        }
 
-        // Order aanmaken
+        // Maak een nieuwe bestelling aan
         $order = Order::create([
             'user_id' => Auth::id(),
-            'status' => 'verzonden', // Eventueel later aanpassen
+            'status' => 'verzonden', // Of naar 'in afwachting' als je dat wilt
             'completed_at' => now(),
         ]);
 
-        // OrderLine toevoegen
-        OrderLine::create([
-            'order_id' => $order->id,
-            'product_id' => $request->product_id,
-            'quantity' => $request->quantity,
-        ]);
+        // Voeg de producten uit de winkelwagen toe als order lines
+        foreach ($cart as $productId => $item) {
+            OrderLine::create([
+                'order_id' => $order->id,
+                'product_id' => $productId,
+                'quantity' => $item['quantity'],
+            ]);
+        }
 
-        // Redirect met succesbericht
-        return redirect()->route('orders.show', $order->id)->with('success', 'Bestelling geplaatst!');
+        // Leeg de winkelwagen na bestelling
+        session()->forget('cart');
+
+        return redirect()->route('orders.show', $order->id)->with('success', 'Bestelling succesvol geplaatst!');
     }
 
     /**

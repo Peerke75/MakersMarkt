@@ -3,6 +3,7 @@
 <title>Bestelling Bevestigen</title>
 
 @section('content')
+
 <body class="bg-gray-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h1 class="text-3xl font-bold text-center mb-8">Bestelling Bevestigen</h1>
@@ -13,7 +14,7 @@
             <p class="text-lg text-gray-800 mb-4">Prijs per stuk: €{{ number_format($product->price, 2) }}</p>
             <p class="text-md text-gray-600 mb-4">Beschikbare voorraad: {{ $product->stock }}</p>
 
-            <form method="POST" action="{{ route('orders.store') }}">
+            <form method="POST" action="{{ route('cart.add', $product->id) }}">
                 @csrf
                 <input type="hidden" name="user_id" value="{{ Auth::id() }}">
                 <input type="hidden" name="product_id" value="{{ $product->id }}">
@@ -23,35 +24,19 @@
                     <input type="number" id="quantity" name="quantity" value="1" min="1" max="{{ $product->stock }}"
                         class="border border-gray-300 rounded-lg p-2 w-full" oninput="updateTotal()">
                 </div>
-        </div>
 
-        <div class="grid grid-cols-2 gap-4 mt-4">
-            <div class="bg-white shadow-lg rounded-lg p-6">
-                <h2 class="text-xl font-semibold mb-2">Betalen met:</h2>
-                <div class="mb-4">
-                    <label for="payment_method" class="block text-gray-700 font-medium mb-2">Betaalmethode:</label>
-                    <select name="payment_method" id="payment_method"
-                        class="border border-gray-300 rounded-lg p-2 w-full">
-                        <option value="ideal">iDeal</option>
-                        <option value="paypal">PayPal</option>
-                        <option value="creditcard">Creditcard</option>
-                        <option value="v-pay">V-Pay</option>
-                        <option value="apple-pay">Apple Pay</option>
-                    </select>
+                <div class="bg-white shadow-lg rounded-lg p-6 mt-4">
+                    <h2 class="text-xl font-semibold mb-2">Totale kosten:</h2>
+                    <p class="text-lg font-semibold text-gray-800 mb-4">
+                        Totaal: <span id="totalAmount">€{{ number_format($product->price, 2) }}</span>
+                    </p>
+                    <button type="submit" class="block text-center py-2 px-4 rounded transition w-full"
+                        style="background-color:#000000; color:#fdd716;">
+                        Toevoegen aan winkelwagen
+                    </button>
                 </div>
-            </div>
-            <div class="bg-white shadow-lg rounded-lg p-6">
-                <h2 class="text-xl font-semibold mb-2">Totale kosten:</h2>
-                <p class="text-lg font-semibold text-gray-800 mb-4">
-                    Totaal: <span id="totalAmount">€{{ number_format($product->price, 2) }}</span>
-                </p>
-                <button type="submit" class="block text-center py-2 px-4 rounded transition w-full"
-                    style="background-color:#000000; color:#fdd716;">
-                    Bestellen
-                </button>
-            </div>
+            </form>
         </div>
-        </form>
 
         <script>
             function updateTotal() {

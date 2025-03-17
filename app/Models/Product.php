@@ -27,4 +27,10 @@ class Product extends Model
     {
         return $this->hasMany(OrderLine::class);
     }
+
+    // Relatie met CartItems
+    public function cartItems()
+    {
+        return $this->hasMany(CartItem::class);
+    }
 }
