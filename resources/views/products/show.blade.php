@@ -62,7 +62,7 @@
                         <div id="dropdownMenu"
                             class="hidden absolute right-0 mt-2 bg-white border border-gray-200 rounded-md shadow-lg p-2 space-y-2">
 
-                            <!-- Bewerken knop -->
+                            <!-- Reviews -->
                             <a href="{{ route('reviews', $product->id) }}"
                                 class="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -72,17 +72,11 @@
                                 </svg>
                                 <span class="ml-2">Reviews</span>
                             </a>
-
-
                         </div>
 
-
-
                     </div>
-
                     <img ssrc="https://picsum.photos/200/300" alt="{{ $product->name }}"
                         class="w-full h-60 object-cover mb-4">
-
                     <h2 class="text-2xl font-semibold mb-2">{{ $product->name }}</h2>
                     <p class="text-lg font-bold text-gray-800 mb-2">Prijs: €{{ number_format($product->price, 2) }}</p>
                     <p class="text-gray-600">Aantal in voorraad: {{ $product->quantity }}</p>
@@ -118,6 +112,7 @@
                 </div>
             </div>
         </div>
+
         <script>
             function toggleDropdown() {
                 const dropdown = document.getElementById('dropdownMenu');

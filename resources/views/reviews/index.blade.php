@@ -33,12 +33,6 @@
 
     <body class="bg-gray-100">
         <div class="container mx-auto px-4 py-8 max-w-3xl">
-            <div class="relative mb-6">
-                <input type="text" id="review-search" placeholder="Zoek reviews..."
-                    class="w-full p-3 border border-gray-300 rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-yellow-400">
-                <ul id="search-results"
-                    class="absolute w-full border border-gray-300 rounded-lg bg-white mt-1 hidden shadow-lg z-10"></ul>
-            </div>
             <div class="flex justify-between items-center mb-8">
                 <div class="bg-white shadow-lg rounded-lg p-4">
                     <p class="text-gray-800">Gemiddelde sterren:
@@ -104,52 +98,5 @@
         function closeModal() {
             document.getElementById('review-modal').classList.add('hidden');
         }
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('review-search');
-            const resultsContainer = document.getElementById('search-results');
-
-            searchInput.addEventListener('input', function() {
-                const query = searchInput.value;
-
-                if (query.length >= 2) {
-                    fetch(`/reviews/search?query=${query}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            resultsContainer.innerHTML = '';
-
-                            if (data.length > 0) {
-                                resultsContainer.classList.remove('hidden');
-                                data.forEach(review => {
-                                    const li = document.createElement('li');
-                                    li.classList.add('p-3', 'hover:bg-yellow-200',
-                                        'cursor-pointer', 'text-gray-800', 'border-b',
-                                        'border-gray-200');
-                                    li.innerHTML =
-                                        `<span class="font-semibold">${review.user}</span>: ${review.description.substring(0, 50)}...`;
-
-                                    li.addEventListener('click', () => {
-                                        window.location.href = `/reviews/${review.id}`;
-                                    });
-
-                                    resultsContainer.appendChild(li);
-                                });
-                            } else {
-                                resultsContainer.classList.add('hidden');
-                            }
-                        });
-                } else {
-                    resultsContainer.classList.add('hidden');
-                }
-            });
-
-            document.addEventListener('click', function(event) {
-                if (!resultsContainer.contains(event.target) && event.target !== searchInput) {
-                    resultsContainer.classList.add('hidden');
-                }
-            });
-        });
     </script>
 @endsection

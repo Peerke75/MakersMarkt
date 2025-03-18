@@ -48,8 +48,8 @@
                     {{-- Categorie filter --}}
                     <select name="categorie_id" id="categorie-filter" class="px-5  border border-gray-300 rounded">
                         <option value="">Categorie</option>
-                        @foreach ($products as $product)
-                            <option value="{{ $product->categorie->id }}">{{ $product->categorie->name }}</option>
+                        @foreach ($categories as $categorie)
+                            <option value="{{ $categorie->id }}">{{ $categorie->name }}</option>
                         @endforeach
                     </select>
 
