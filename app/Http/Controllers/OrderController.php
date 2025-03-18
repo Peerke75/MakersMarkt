@@ -14,7 +14,8 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        $orders = Order::where('maker_id', auth()->id())->get();
+        return view('orders.index', compact('orders'));
     }
 
     /**
@@ -89,5 +90,20 @@ class OrderController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function statusChange(Request $request, Order $order)
+    {
+        $request->validate([
+            'status' => 'required|in:In productie,Verzonden,Geweigerd', // Exacte ENUM-waarden
+            'status_message' => 'nullable|string'
+        ]);
+
+        $order->update([
+            'status' => $request->status,
+            'status_message' => $request->status_message
+        ]);
+
+        return redirect()->back()->with('success', 'Bestellingstatus bijgewerkt!');
     }
 }

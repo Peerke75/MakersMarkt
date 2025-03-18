@@ -33,6 +33,5 @@ class ReviewSeeder extends Seeder
             ]);
         }
 
-        $this->command->info('20 reviews met decimal ratings succesvol toegevoegd!');
     }
 }

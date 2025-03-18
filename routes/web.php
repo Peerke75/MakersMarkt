@@ -60,6 +60,9 @@ Route::prefix('cart')->group(function () {
     Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 });
 
+Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+Route::put('/orders/{order}/update', [OrderController::class, 'statusChange'])->name('orders.update');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

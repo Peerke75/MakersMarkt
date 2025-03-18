@@ -13,9 +13,12 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('maker_id')->constrained('users');
+            $table->foreignId('koper_id')->constrained('users');
             $table->dateTime('completed_at')->nullable();
-            $table->enum('status', ['verzonden', 'geweigerd, terugbetaling verzonden']);
+            $table->enum('status', ['verzonden', 'in productie', 'geweigerd, terugbetaling verzonden']);
+            $table->longText('status_message')->nullable();
+            $table->float('total_price');
             $table->timestamps();
         });
     }
