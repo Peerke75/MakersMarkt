@@ -78,71 +78,75 @@
 
 
             <h1 class="text-3xl font-bold text-center mb-8">Catalogus</h1>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                @foreach ($products as $product)
-                    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
-                        <img src="https://picsum.photos/200/300" alt="Product Afbeelding" class="w-full h-48 object-cover"
-                            loading="lazy">
-                        <div class="p-4">
-                            <h2 class="text-xl font-semibold mb-2">{{ $product->name }}</h2>
-                            <div class="flex justify-between items-center mb-4">
-                                <p class="text-lg font-bold text-gray-800">€{{ number_format($product->price, 2) }}</p>
+            @if ($products->isEmpty())
+                <p class="text-center text-gray-500">Geen producten gevonden voor deze filter.</p>
+            @else
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    @foreach ($products as $product)
+                        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+                            <img src="https://picsum.photos/200/300" alt="Product Afbeelding"
+                                class="w-full h-48 object-cover" loading="lazy">
+                            <div class="p-4">
+                                <h2 class="text-xl font-semibold mb-2">{{ $product->name }}</h2>
+                                <div class="flex justify-between items-center mb-4">
+                                    <p class="text-lg font-bold text-gray-800">€{{ number_format($product->price, 2) }}</p>
+                                </div>
+                                <a href="{{ route('products.info', $product->id) }}"
+                                    class="block bg-gray-300 text-center py-2 px-4 rounded transition">Bekijk product</a>
                             </div>
-                            <a href="{{ route('products.info', $product->id) }}"
-                                class="block bg-gray-300 text-center py-2 px-4 rounded transition">Bekijk product</a>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
 
-            </div>
+                </div>
 
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    const searchInput = document.getElementById('product-search');
-                    const resultsContainer = document.getElementById('search-results');
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const searchInput = document.getElementById('product-search');
+                        const resultsContainer = document.getElementById('search-results');
 
-                    searchInput.addEventListener('input', function() {
-                        const query = searchInput.value;
+                        searchInput.addEventListener('input', function() {
+                            const query = searchInput.value;
 
-                        if (query.length >= 2) {
-                            fetch(`/products/search?query=${query}`)
-                                .then(response => response.json())
-                                .then(data => {
-                                    resultsContainer.innerHTML = '';
+                            if (query.length >= 2) {
+                                fetch(`/products/search?query=${query}`)
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        resultsContainer.innerHTML = '';
 
-                                    if (data.length > 0) {
-                                        resultsContainer.classList.remove('hidden');
-                                        data.forEach(product => {
-                                            const li = document.createElement('li');
-                                            li.classList.add('p-3', 'hover:bg-yellow-200',
-                                                'cursor-pointer', 'text-gray-800', 'border-b',
-                                                'border-gray-200');
-                                            li.innerHTML =
-                                                `<span class="font-semibold">${product.name}</span> - €${parseFloat(product.price).toFixed(2)}`;
+                                        if (data.length > 0) {
+                                            resultsContainer.classList.remove('hidden');
+                                            data.forEach(product => {
+                                                const li = document.createElement('li');
+                                                li.classList.add('p-3', 'hover:bg-yellow-200',
+                                                    'cursor-pointer', 'text-gray-800', 'border-b',
+                                                    'border-gray-200');
+                                                li.innerHTML =
+                                                    `<span class="font-semibold">${product.name}</span> - €${parseFloat(product.price).toFixed(2)}`;
 
-                                            li.addEventListener('click', () => {
-                                                window.location.href =
-                                                    `/products/${product.id}/info`;
+                                                li.addEventListener('click', () => {
+                                                    window.location.href =
+                                                        `/products/${product.id}/info`;
+                                                });
+
+                                                resultsContainer.appendChild(li);
                                             });
+                                        } else {
+                                            resultsContainer.classList.add('hidden');
+                                        }
+                                    });
+                            } else {
+                                resultsContainer.classList.add('hidden');
+                            }
+                        });
 
-                                            resultsContainer.appendChild(li);
-                                        });
-                                    } else {
-                                        resultsContainer.classList.add('hidden');
-                                    }
-                                });
-                        } else {
-                            resultsContainer.classList.add('hidden');
-                        }
+                        document.addEventListener('click', function(event) {
+                            if (!resultsContainer.contains(event.target) && event.target !== searchInput) {
+                                resultsContainer.classList.add('hidden');
+                            }
+                        });
                     });
-
-                    document.addEventListener('click', function(event) {
-                        if (!resultsContainer.contains(event.target) && event.target !== searchInput) {
-                            resultsContainer.classList.add('hidden');
-                        }
-                    });
-                });
-            </script>
+                </script>
+            @endif
         </div>
     </body>
 @endsection
