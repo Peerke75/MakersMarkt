@@ -22,7 +22,6 @@ class Product extends Model
         'status'
     ];
 
-    // Relatie met Categorie model
     public function categorie()
     {
         return $this->belongsTo(Categorie::class, 'categorie_id');
@@ -34,6 +33,11 @@ class Product extends Model
         return $this->belongsToMany(User::class, 'user_product');
     }
 
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class, 'order_product');
+    }
+
     // Relatie met OrderLines
     public function orderLines()
     {
@@ -42,7 +46,7 @@ class Product extends Model
 
     public function reviews()
     {
-        return $this->hasMany(Review::class);
+        return $this->hasMany(Review::class, 'product_id');
     }
 
 
