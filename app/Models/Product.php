@@ -39,9 +39,20 @@ class Product extends Model
         return $this->hasMany(OrderLine::class);
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+
     // Relatie met CartItems
     public function cartItems()
     {
         return $this->hasMany(CartItem::class);
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
     }
 }
