@@ -88,11 +88,29 @@ class CartController extends Controller
             return redirect()->route('cart.show')->with('error', 'Je winkelwagen is leeg.');
         }
 
+        $user = auth()->user();
+        $totalPrice = 0;
+
+        foreach ($cart as $item) {
+            $totalPrice += $item['price'] * $item['quantity'];
+        }
+
+        // Controleer of de gebruiker "Eigen saldo" als betaalmethode heeft gekozen
+        if ($request->input('payment_method') === 'own_money') {
+            if ($user->credits < $totalPrice) {
+                return redirect()->route('cart.show')->with('error', 'Je hebt niet genoeg saldo om deze bestelling te plaatsen.');
+            }
+
+            // Trek het bedrag af van het saldo **voor** de transactie
+            $user->credits -= $totalPrice;
+            $user->save();
+        }
+
         try {
             \DB::beginTransaction(); // Start database-transactie
 
             // Maak de bestelling aan
-            $order = auth()->user()->orders()->create([
+            $order = $user->orders()->create([
                 'status' => 'verzonden',
                 'completed_at' => now(),
                 'payment_method' => $request->input('payment_method'),
@@ -108,7 +126,7 @@ class CartController extends Controller
 
             \DB::commit(); // Bevestig de database-operaties
 
-            session()->forget('cart'); // Pas hier de sessie wissen
+            session()->forget('cart'); // Winkelwagen legen
 
             return redirect()->route('orders.show', $order->id)->with('success', 'Bestelling geplaatst!');
         } catch (\Exception $e) {
