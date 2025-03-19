@@ -30,7 +30,7 @@ class AdminController extends Controller
         $categories = Categorie::all();
         $users = User::all();
 
-        return view('admin.index', compact('products', 'categories','users'));
+        return view('admin.index', compact('products', 'categories', 'users'));
     }
 
     // Verwijderen van een product
@@ -47,9 +47,22 @@ class AdminController extends Controller
 
         return redirect()->route('admin.index')->with('success', 'Product succesvol verwijderd');
     }
+    
     public function destroyUser(User $user)
     {
         $user->delete();
         return redirect()->route('admin.index')->with('success', 'Gebruiker succesvol verwijderd');
+    }
+
+    public function activate(Product $product)
+    {
+        $product->update(['status' => 'active']);
+        return redirect()->route('admin.index')->with('success', 'Product is geactiveerd!');
+    }
+
+    public function deactivate(Product $product)
+    {
+        $product->update(['status' => 'inactive']);
+        return redirect()->route('admin.index')->with('error', 'Product is gedeactiveerd.');
     }
 }

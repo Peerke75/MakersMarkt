@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('categorie_id')->constrained();
             $table->foreignId('maker_id')->constrained('users');
             $table->string('name');
-            $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->enum('status', ['active', 'inactive', 'pending'])->default('pending');
             $table->longText('status_change')->nullable();
             $table->text('description');
             $table->enum('production_time', ['1-3 maanden', '4-6 maanden', '7-9 maanden', '10-12 maanden']);

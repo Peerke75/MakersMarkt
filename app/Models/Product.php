@@ -18,7 +18,8 @@ class Product extends Model
         'material',
         'price',
         'quantity',
-        'image'
+        'image',
+        'status'
     ];
 
     // Relatie met Categorie model

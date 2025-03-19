@@ -14,7 +14,7 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::query();
+        $query = Product::where('status','active');
 
         // Filters toepassen
         if ($request->has('categorie_id') && $request->categorie_id != '') {
@@ -28,7 +28,7 @@ class ProductController extends Controller
         }
 
         $products = $query->get();
-        $categories = Categorie::all(); // ✅ Haal categorieën apart op
+        $categories = Categorie::all();
 
         return view('products.index', compact('products', 'categories'));
     }

@@ -33,6 +33,9 @@ Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
 
 Route::delete('/admin/products/{product}', [AdminController::class, 'destroyProduct'])->name('admin.products.destroy');
 Route::delete('/admin/users/{user}', [AdminController::class, 'destroyUser'])->name('admin.users.destroy');
+Route::patch('/admin/products/{product}/activate', [AdminController::class, 'activate'])->name('admin.products.activate');
+Route::patch('/admin/products/{product}/deactivate', [AdminController::class, 'deactivate'])->name('admin.products.deactivate');
+
 
 
 

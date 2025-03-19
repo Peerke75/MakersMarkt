@@ -67,6 +67,20 @@ class UserSeeder extends Seeder
                 'remember_token' => Str::random(10),
                 'created_at' => now(),
                 'updated_at' => now(),
+            ],
+            [
+                'role_id' => 2,
+                'username' => 'Mnighter',
+                'name' => 'Malik',
+                'email' => 'test@test.nl',
+                'email_verified_at' => now(),
+                'password' => Hash::make('testtest'),
+                'bio' => 'Ik ben een sigma.',
+                'is_verified' => true,
+                'credits' => 1000.00,
+                'remember_token' => Str::random(10),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]
         ]);
     }
