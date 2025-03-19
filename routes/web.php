@@ -41,12 +41,6 @@ Route::get('/admin/products/checkLanguage', [AdminController::class, 'checkForIn
 Route::get('/admin/products/{product}/edit', [AdminController::class, 'descriptionEdit'])->name('admin.description.edit');
 Route::put('/admin/products/{product}', [AdminController::class, 'descriptionUpdate'])->name('admin.description.update');
 
-
-
-
-
-
-
 Route::middleware(['auth'])->group(function () {
     Route::get('/portfolio', [PortfolioController::class, 'index'])->name('portfolio.index');
     Route::get('/portfolio/create', [PortfolioController::class, 'create'])->name('portfolio.create');
@@ -81,6 +75,11 @@ Route::prefix('cart')->group(function () {
     Route::delete('/remove/{id}', [CartController::class, 'removeFromCart'])->name('cart.remove');
     Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 });
+
+Route::get('/user/verification', [UserController::class, 'index'])->name('verification.index');
+
+Route::post('/user/{user}/verify', [UserController::class, 'verifyUser']);
+Route::post('/user/{user}/reject', [UserController::class, 'rejectUser']);
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
