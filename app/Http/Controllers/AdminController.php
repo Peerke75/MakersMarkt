@@ -25,15 +25,40 @@ class AdminController extends Controller
             $query->where('material', $request->material);
         }
 
-        // Producten ophalen
         $products = $query->get();
         $categories = Categorie::all();
         $users = User::all();
+        $badWords = ['vloekwoord1', 'vloekwoord2', 'scheldwoord'];
 
-        return view('admin.index', compact('products', 'categories', 'users'));
+        return view('admin.index', compact('products', 'categories', 'users', 'badWords'));
     }
 
-    // Verwijderen van een product
+    public function descriptionEdit($id)
+    {
+        $product = Product::findOrFail($id);
+
+        return view('admin.description.edit', compact('product'));
+    }
+
+
+    public function descriptionUpdate(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required',
+        ]);
+
+        $product = Product::findOrFail($id);
+
+        $product->name = $request->name;
+        $product->description = $request->description;
+
+        $product->save();
+
+        return redirect()->route('admin.index')->with('success', 'beschrijving succesvol bijgewerkt!');
+    }
+
+
     public function destroyProduct(Product $product)
     {
 
@@ -47,7 +72,7 @@ class AdminController extends Controller
 
         return redirect()->route('admin.index')->with('success', 'Product succesvol verwijderd');
     }
-    
+
     public function destroyUser(User $user)
     {
         $user->delete();
@@ -64,5 +89,22 @@ class AdminController extends Controller
     {
         $product->update(['status' => 'inactive']);
         return redirect()->route('admin.index')->with('error', 'Product is gedeactiveerd.');
+    }
+
+    public function checkForInappropriateLanguage(Request $request)
+    {
+        $badWords = ['vloekwoord1', 'vloekwoord2', 'scheldwoord'];
+
+
+        $products = Product::where(function ($query) use ($badWords) {
+            foreach ($badWords as $word) {
+                $query->orWhere('description', 'LIKE', "%{$word}%");
+            }
+        })->get();
+
+        $categories = Categorie::all();
+        $users = User::all();
+
+        return view('admin.index', compact('products', 'badWords', 'categories', 'users'));
     }
 }
