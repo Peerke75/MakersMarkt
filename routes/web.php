@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CreditController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PortfolioController;
@@ -59,6 +60,10 @@ Route::prefix('cart')->group(function () {
     Route::delete('/remove/{id}', [CartController::class, 'removeFromCart'])->name('cart.remove');
     Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 });
+
+
+Route::get('/credits', [CreditController::class, 'show'])->name('credits');
+Route::post('/credits/add', [CreditController::class, 'addCredit'])->name('credits.add');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
