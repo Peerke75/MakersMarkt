@@ -44,4 +44,9 @@ class Product extends Model
     {
         return $this->hasMany(CartItem::class);
     }
+
+    public function maker()
+    {
+        return $this->belongsTo(User::class, 'maker_id');
+    }
 }

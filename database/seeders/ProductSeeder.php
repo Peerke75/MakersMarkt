@@ -12,7 +12,7 @@ class ProductSeeder extends Seeder
         DB::table('products')->insert([
             [
                 'categorie_id' => 1,
-                'maker_id' => 4,
+                'maker_id' => 3,
                 'name' => 'Laptop',
                 'status' => 'active',
                 'status_change' => null,
@@ -28,7 +28,7 @@ class ProductSeeder extends Seeder
             ],
             [
                 'categorie_id' => 2,
-                'maker_id' => 4,
+                'maker_id' => 3,
                 'name' => 'Book - Laravel Guide',
                 'status' => 'active',
                 'status_change' => null,

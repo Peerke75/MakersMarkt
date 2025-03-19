@@ -13,6 +13,7 @@ class OrderSeeder extends Seeder
         DB::table('orders')->insert([
             [
                 'user_id' => 2,
+                'maker_id' => 3,
                 'completed_at' => Carbon::now()
             ]
         ]);

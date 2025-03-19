@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\OrderLine;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Product;
+use App\Notifications\OrderPlacedNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -14,7 +16,17 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        $user = auth()->user();
+
+        // Bestellingen die de gebruiker heeft geplaatst
+        $ordersAsBuyer = Order::where('user_id', $user->id)->get();
+
+        // Bestellingen waarbij de gebruiker de maker is van een product
+        $ordersAsMaker = Order::whereHas('orderLines.product', function ($query) use ($user) {
+            $query->where('maker_id', $user->id); // Alleen bestellingen van producten die de maker heeft
+        })->get();
+
+        return view('orders.index', compact('ordersAsBuyer', 'ordersAsMaker'));
     }
 
     /**
@@ -22,7 +34,7 @@ class OrderController extends Controller
      */
     public function create()
     {
-        //
+        // Dit kan gebruikt worden om een formulier te tonen voor het maken van een bestelling
     }
 
     /**
@@ -30,20 +42,20 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        // Controleer of de winkelwagen leeg is
+        // Check of de winkelwagen leeg is
         $cart = session()->get('cart', []);
         if (empty($cart)) {
             return redirect()->route('cart.show')->with('error', 'Je winkelwagen is leeg!');
         }
 
-        // Maak een nieuwe bestelling aan
+        // Maak de bestelling aan
         $order = Order::create([
             'user_id' => Auth::id(),
-            'status' => 'verzonden', // Of naar 'in afwachting' als je dat wilt
+            'status' => 'geplaatst', // default status
             'completed_at' => now(),
         ]);
 
-        // Voeg de producten uit de winkelwagen toe als order lines
+        // Voeg orderregels toe voor elk product in de winkelwagen
         foreach ($cart as $productId => $item) {
             OrderLine::create([
                 'order_id' => $order->id,
@@ -52,7 +64,12 @@ class OrderController extends Controller
             ]);
         }
 
-        // Leeg de winkelwagen na bestelling
+        // Stuur een notificatie naar de maker van de bestelling indien van toepassing
+        if ($order->maker) {
+            $order->maker->notify(new OrderPlacedNotification($order));
+        }
+
+        // Leeg de winkelwagen
         session()->forget('cart');
 
         return redirect()->route('orders.show', $order->id)->with('success', 'Bestelling succesvol geplaatst!');
@@ -61,33 +78,35 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Order $order)
     {
-        $order = Order::with('orderLines.product')->findOrFail($id);
+        // Haal de orderdetails op inclusief de producten en hun hoeveelheden
+        $order = Order::with('orderLines.product')->findOrFail($order->id);
         return view('orders.show', compact('order'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function updateStatus(Request $request, Order $order)
     {
-        //
-    }
+        $user = auth()->user();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        // Controleer of de gebruiker de maker is van een product in de bestelling
+        $canUpdate = $order->orderLines->some(function ($line) use ($user) {
+            return $line->product->maker_id == $user->id; // Maker moet de bestelling kunnen bewerken
+        });
+
+        if (!$canUpdate) {
+            return redirect()->route('orders.index')->with('error', 'Je hebt geen toegang om deze bestelling te bewerken.');
+        }
+
+        // Als de gebruiker de maker is, pas de status aan
+        $order->update([
+            'status' => $request->status,
+            'status_description' => $request->status_description,
+        ]);
+
+        return redirect()->route('orders.show', $order->id)->with('success', 'Bestellingsstatus bijgewerkt!');
     }
 }

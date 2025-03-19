@@ -61,6 +61,13 @@ Route::prefix('cart')->group(function () {
     Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 });
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+    Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus')->middleware('auth');
+});
+
 
 Route::get('/credits', [CreditController::class, 'show'])->name('credits');
 Route::post('/credits/add', [CreditController::class, 'addCredit'])->name('credits.add');

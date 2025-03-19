@@ -111,7 +111,7 @@ class CartController extends Controller
 
             // Maak de bestelling aan
             $order = $user->orders()->create([
-                'status' => 'verzonden',
+                'status' => 'geplaatst',
                 'completed_at' => now(),
                 'payment_method' => $request->input('payment_method'),
             ]);
