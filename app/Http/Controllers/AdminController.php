@@ -93,18 +93,33 @@ class AdminController extends Controller
 
     public function checkForInappropriateLanguage(Request $request)
     {
-        $badWords = ['vloekwoord1', 'vloekwoord2', 'scheldwoord'];
+        // Laad de lijst met slechte woorden uit een tekstbestand
+        $badWords = file(storage_path('app/badwords.txt'), FILE_IGNORE_NEW_LINES);
 
+        // Controleer of het bestand daadwerkelijk woorden bevat
+        if (empty($badWords)) {
+            return response()->json(['error' => 'Bad words file is empty or not found.']);
+        }
 
-        $products = Product::where(function ($query) use ($badWords) {
-            foreach ($badWords as $word) {
-                $query->orWhere('description', 'LIKE', "%{$word}%");
+        // Haal de producten op die slechte woorden bevatten in hun beschrijving
+        $products = Product::all();
+
+    // Markeer de beschrijvingen van de producten met de slechte woorden (zonder cache)
+    foreach ($products as $product) {
+        foreach ($badWords as $word) {
+            if (stripos($product->description, $word) !== false) {
+                // Markeer het woord rood in de beschrijving
+                $product->description = preg_replace('/(' . preg_quote($word, '/') . ')/i', '<span class="text-red-500 font-bold">$1</span>', $product->description);
             }
-        })->get();
+        }
+    }
 
+        // Haal alle categorieën en gebruikers op voor de weergave
         $categories = Categorie::all();
         $users = User::all();
 
+        // Retourneer de view met de producten die slechte woorden bevatten
         return view('admin.index', compact('products', 'badWords', 'categories', 'users'));
     }
+
 }
