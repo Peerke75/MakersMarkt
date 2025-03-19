@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
-use App\Models\Categorie;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Product;
+use App\Models\Categorie;
+use App\Models\Review;
 
 class AdminController extends Controller
 {
-    // Indexpagina voor admin: productenbeheer
     public function index(Request $request)
     {
         $query = Product::query();
 
-        // Filters toepassen
         if ($request->has('categorie_id') && $request->categorie_id != '') {
             $query->where('categorie_id', $request->categorie_id);
         }
@@ -109,11 +108,10 @@ class AdminController extends Controller
             }
         })->get();
 
-        // Markeer de beschrijvingen van de producten met de slechte woorden
         foreach ($products as $product) {
             foreach ($badWords as $word) {
                 if (stripos($product->description, $word) !== false) {
-                    // Markeer het woord rood in de beschrijving
+
                     $product->description = preg_replace('/(' . preg_quote($word, '/') . ')/i', '<span class="text-red-500 font-bold">$1</span>', $product->description);
                 }
             }
@@ -123,5 +121,44 @@ class AdminController extends Controller
         $users = User::all();
 
         return view('admin.index', compact('products', 'badWords', 'categories', 'users'));
+    }
+
+    public function getStatistics()
+    {
+
+        $categories = Product::with('categorie')
+            ->selectRaw('categorie_id, COUNT(*) as count')
+            ->groupBy('categorie_id')
+            ->get();
+
+
+        $ratings = Product::with('reviews', 'categorie')
+            ->get()
+            ->mapWithKeys(function ($product) {
+
+                $avgRating = $product->reviews->avg('rating');
+                return [$product->name => $avgRating ?: 0];
+            });
+
+
+        $popularProducts = Product::withSum('orderLines as total_quantity', 'quantity')
+        ->orderByDesc('total_quantity')
+        ->limit(5)
+        ->get();
+
+        return response()->json([
+            'categories' => [
+                'labels' => $categories->pluck('categorie.name'),
+                'data' => $categories->pluck('count'),
+            ],
+            'ratings' => [
+                'labels' => $ratings->keys(),
+                'data' => $ratings->values(),
+            ],
+            'popular' => [
+                'labels' => $popularProducts->pluck('name'),
+                'data' => $popularProducts->pluck('total_quantity'),
+            ],
+        ]);
     }
 }

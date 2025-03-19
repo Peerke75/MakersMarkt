@@ -32,6 +32,8 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
 
+Route::get('/admin/statistics', [AdminController::class, 'getStatistics'])->name('admin.statistics');
+
 Route::delete('/admin/products/{product}', [AdminController::class, 'destroyProduct'])->name('admin.products.destroy');
 Route::delete('/admin/users/{user}', [AdminController::class, 'destroyUser'])->name('admin.users.destroy');
 
@@ -41,6 +43,9 @@ Route::patch('/admin/products/{product}/deactivate', [AdminController::class, 'd
 Route::get('/admin/products/checkLanguage', [AdminController::class, 'checkForInappropriateLanguage'])->name('admin.products.checkLanguage');
 Route::get('/admin/products/{product}/edit', [AdminController::class, 'descriptionEdit'])->name('admin.description.edit');
 Route::put('/admin/products/{product}', [AdminController::class, 'descriptionUpdate'])->name('admin.description.update');
+
+
+
 
 
 

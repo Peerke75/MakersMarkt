@@ -18,6 +18,10 @@
                     data-tab="ongepaste-taal">
                     Ongepaste Taal
                 </li>
+                <li class="tab-item flex-1 text-center border-b-2 border-transparent py-2 px-4 cursor-pointer hover:text-blue-500 hover:border-blue-500"
+                    data-tab="statistieken">
+                    Statistieken
+                </li>
             </ul>
         </div>
 
@@ -216,10 +220,36 @@
                 @endif
             </div>
 
+            <!-- Statistieken -->
+            <div class="tab-pane hidden" id="statistieken">
+                <h1 class="text-3xl font-bold text-center mb-8">Statistieken</h1>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Productcategorieën -->
+                    <div class="bg-white shadow-lg rounded-lg p-6">
+                        <h2 class="text-xl font-bold mb-4">Producten per categorie</h2>
+                        <canvas id="categorieChart"></canvas>
+                    </div>
+
+                    <!-- Gemiddelde beoordelingen -->
+                    <div class="bg-white shadow-lg rounded-lg p-6">
+                        <h2 class="text-xl font-bold mb-4">Gemiddelde beoordelingen</h2>
+                        <canvas id="ratingChart"></canvas>
+                    </div>
+
+                    <!-- Populaire producten -->
+                    <div class="bg-white shadow-lg rounded-lg p-6">
+                        <h2 class="text-xl font-bold mb-4">Populaire producten</h2>
+                        <canvas id="popularChart"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Tab script -->
+    <!-- Chart.js importeren -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const tabs = document.querySelectorAll('.tab-item');
@@ -244,6 +274,52 @@
             // Stel de eerste tab en pane in als actief bij het laden
             tabs[0].classList.add('border-blue-500', 'text-blue-500');
             tabPanes[0].classList.remove('hidden');
+
+            fetch("{{ route('admin.statistics') }}")
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data); // Log de data om te controleren of deze correct wordt geladen
+
+                    // Producten per categorie
+                    new Chart(document.getElementById("categorieChart"), {
+                        type: 'bar',
+                        data: {
+                            labels: data.categories.labels,
+                            datasets: [{
+                                label: "Aantal producten",
+                                backgroundColor: "#3b82f6",
+                                data: data.categories.data
+                            }]
+                        }
+                    });
+
+                    // Gemiddelde beoordelingen
+                    new Chart(document.getElementById("ratingChart"), {
+                        type: 'bar',
+                        data: {
+                            labels: data.ratings.labels,
+                            datasets: [{
+                                label: "Gemiddelde beoordeling",
+                                backgroundColor: "#facc15",
+                                data: data.ratings.data
+                            }]
+                        }
+                    });
+
+                    // Populaire producten
+                    new Chart(document.getElementById("popularChart"), {
+                        type: 'pie',
+                        data: {
+                            labels: data.popular.labels,
+                            datasets: [{
+                                backgroundColor: ["#ef4444", "#3b82f6", "#22c55e"],
+                                data: data.popular.data
+                            }]
+                        }
+                    });
+                });
+
         });
     </script>
+
 @endsection
