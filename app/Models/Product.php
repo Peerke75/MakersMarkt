@@ -56,4 +56,9 @@ class Product extends Model
     {
         return $this->belongsTo(Role::class);
     }
+    
+    public function maker()
+    {
+        return $this->belongsTo(User::class, 'maker_id');
+    }
 }

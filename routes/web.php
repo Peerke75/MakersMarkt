@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CreditController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PortfolioController;
@@ -81,6 +82,17 @@ Route::prefix('cart')->group(function () {
     Route::delete('/remove/{id}', [CartController::class, 'removeFromCart'])->name('cart.remove');
     Route::post('/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 });
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+    Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus')->middleware('auth');
+});
+
+
+Route::get('/credits', [CreditController::class, 'show'])->name('credits');
+Route::post('/credits/add', [CreditController::class, 'addCredit'])->name('credits.add');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

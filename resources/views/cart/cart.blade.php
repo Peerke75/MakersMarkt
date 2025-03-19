@@ -28,7 +28,7 @@
                         <td class="align-middle">{{ $item['name'] }}</td>
                         <td class="align-middle flex justify-center items-center">
                             <button type="button" class="quantity-btn px-2 py-1 bg-gray-300 rounded" data-action="decrease" data-id="{{ $productId }}">-</button>
-                            <input type="number" class="quantity-input mx-2 text-center w-12" value="{{ $item['quantity'] }}" min="1">
+                            <input type="number" class="quantity-input mx-2 text-center w-16" value="{{ $item['quantity'] }}" min="1">
                             <button type="button" class="quantity-btn px-2 py-1 bg-gray-300 rounded" data-action="increase" data-id="{{ $productId }}">+</button>
                         </td>
                         <td class="align-middle">€{{ number_format($item['price'], 2) }}</td>
@@ -54,8 +54,14 @@
                             <option value="creditcard">Creditcard</option>
                             <option value="vpay">V Pay</option>
                             <option value="visa">Visa</option>
+                            <option value="own_money">Eigen saldo</option>
                         </select>
                     </div>
+
+                    @if(auth()->check())
+                    <p class="text-sm text-gray-600">Beschikbaar saldo: <strong>€{{ number_format(auth()->user()->credits, 2) }}</strong></p>
+                    @endif
+
                     <div class="text-right text-xl font-bold mt-4">
                         Totaalprijs: <span id="totalPrice"></span>
                     </div>
@@ -71,10 +77,10 @@
 @endsection
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         updateTotalPrice();
 
-        document.addEventListener('click', function (event) {
+        document.addEventListener('click', function(event) {
             if (event.target.classList.contains('quantity-btn')) {
                 const action = event.target.dataset.action;
                 const productId = event.target.dataset.id;
@@ -92,18 +98,20 @@
 
                 // Update de winkelwagen via AJAX
                 fetch(`/cart/update/${productId}`, {
-                    method: 'POST',
-                    headers: { 
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}', 
-                        'Content-Type': 'application/json' 
-                    },
-                    body: JSON.stringify({ quantity: newQuantity })
-                }).then(response => response.json())
-                .then(data => {
-                    if (!data.success) {
-                        alert("Er is iets misgegaan bij het bijwerken van de winkelwagen.");
-                    }
-                });
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            quantity: newQuantity
+                        })
+                    }).then(response => response.json())
+                    .then(data => {
+                        if (!data.success) {
+                            alert("Er is iets misgegaan bij het bijwerken van de winkelwagen.");
+                        }
+                    });
             }
         });
     });
@@ -117,4 +125,31 @@
         });
         document.getElementById('totalPrice').innerText = '€' + total.toFixed(2);
     }
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const paymentMethodSelect = document.getElementById("payment_method");
+        const totalPriceElement = document.getElementById("totalPrice");
+        const checkoutButton = document.querySelector("button[type='submit']");
+        const userBalance = parseFloat("{{ auth()->user()->credits ?? 0 }}");
+
+        function checkBalance() {
+            const totalPrice = parseFloat(totalPriceElement.innerText.replace("€", ""));
+
+            if (paymentMethodSelect.value === "own_money" && totalPrice > userBalance) {
+                alert("Je hebt niet genoeg saldo om deze bestelling te plaatsen.");
+                checkoutButton.disabled = true;
+            } else {
+                checkoutButton.disabled = false;
+            }
+        }
+
+        // Controle uitvoeren bij wijziging van betalingsmethode of aantal producten
+        paymentMethodSelect.addEventListener("change", checkBalance);
+        document.addEventListener("input", checkBalance);
+
+        // Controle uitvoeren bij het laden van de pagina
+        checkBalance();
+    });
 </script>

@@ -39,10 +39,8 @@
                         {{ __('Admin Paneel') }}
                     </x-nav-link>
                 </div>
-
             </div>
 
-            <!-- Settings Dropdown -->
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <!-- Winkelwagen -->
@@ -72,8 +70,12 @@
                     </x-slot>
 
                     <x-slot name="content">
+                        <x-dropdown-link :href="route('credits')">
+                            {{ __('Opwaarderen') }}
+                        </x-dropdown-link>
+
                         <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
+                            {{ __('Profiel') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->
@@ -83,7 +85,7 @@
                             <x-dropdown-link :href="route('logout')"
                                 onclick="event.preventDefault();
                                     this.closest('form').submit();">
-                                {{ __('Log Out') }}
+                                {{ __('Log Uit') }}
                             </x-dropdown-link>
                         </form>
                     </x-slot>
@@ -121,8 +123,12 @@
                 {{ __('Orders') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link :active="request()->routeIs('#')">
+            <x-responsive-nav-link :href="route('portfolio.index')" :active="request()->routeIs('portfolio.index')">
                 {{ __('Mijn Portfolio') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('credits')" :active="request()->routeIs('credits')">
+                {{ __('Opwaarderen') }}
             </x-responsive-nav-link>
         </div>
 
